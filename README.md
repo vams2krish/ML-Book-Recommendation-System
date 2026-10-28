@@ -64,8 +64,8 @@ flowchart LR
 Use **Python 3.11** for the best starting point when working with the historical model. The package metadata permits Python 3.11 and newer, but the saved estimator was created with **scikit-learn 1.3.0**. Loading it with another version can produce compatibility warnings or failures; retraining in your chosen environment is recommended for a reproducible deployment.
 
 ```bash
-git clone https://github.com/vams2krish/Book-Recommendation-System.git
-cd Book-Recommendation-System
+git clone https://github.com/vams2krish/ML-Book-Recommendation-System.git
+cd ML-Book-Recommendation-System
 python -m venv .venv
 ```
 
@@ -97,7 +97,7 @@ Open the local URL printed by Streamlit, typically `http://localhost:8501`. Sele
 ## Repository layout
 
 ```text
-Book-Recommendation-System/
+ML-Book-Recommendation-System/
 ├── app.py                          # Streamlit UI and recommendation functions
 ├── Book Recommender System.ipynb    # Exploration, preprocessing, training, export
 ├── artifacts/
