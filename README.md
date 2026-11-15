@@ -6,9 +6,11 @@ Discover your next read through an interactive Streamlit app that recommends boo
 ![Streamlit](https://img.shields.io/badge/UI-Streamlit-FF4B4B?logo=streamlit&logoColor=white)
 ![scikit-learn](https://img.shields.io/badge/ML-scikit--learn-F7931E?logo=scikitlearn&logoColor=white)
 
+**[Try the live demo on Vercel](https://ml-book-recommendation-system.vercel.app)**
+
 ## Product screenshots
 
-**Next Chapter** shows real book covers in horizontal shelves. Search for a title, explore five recommendations, and open **Why this book?** to see how the model found each match.
+These seven screenshots were captured from the live Vercel demo. **Next Chapter** shows real book covers in horizontal shelves. Search for a title, explore five recommendations, and open **Why this book?** to see how the model found each match.
 
 ![Next Chapter landing screen with book search and a featured cover shelf](docs/images/01-discover.png)
 
@@ -16,9 +18,9 @@ Discover your next read through an interactive Streamlit app that recommends boo
 | --- | --- |
 | ![Searching for 1984](docs/images/03-search.png) | ![Five recommendations based on 1984](docs/images/04-recommendations.png) |
 
-| Try another title | Mobile layout | Empty selection |
+| Try another title | Mobile layout | Invalid title |
 | --- | --- | --- |
-| ![Recommendations for The Da Vinci Code](docs/images/05-another-book.png) | ![Reading list at mobile width](docs/images/06-mobile.png) | ![Prompt to choose a book](docs/images/02-empty-selection.png) |
+| ![Recommendations for The Da Vinci Code](docs/images/05-another-book.png) | ![Reading list at mobile width](docs/images/06-mobile.png) | ![Prompt to choose a title from the catalog](docs/images/02-empty-selection.png) |
 
 ![Why this book explanation open beneath a recommendation](docs/images/07-why-this-book.png)
 
@@ -149,7 +151,9 @@ Run the notebook cells in order from the repository root. Its export cells overw
 
 ## Live demo
 
-A public Vercel deployment is pending. To try the interactive app, follow the [local setup instructions](#run-locally).
+The [Vercel demo](https://ml-book-recommendation-system.vercel.app) serves the browser interface in `vercel-demo/`. It uses an exported catalog containing the five nearest matches and shared reader counts for each of the 742 titles. The local Streamlit app computes those matches from the bundled ratings matrix.
+
+After regenerating the model artifacts, run `python export_catalog.py` from the repository root to refresh the browser catalog before redeploying the demo.
 
 ## Limitations and future improvements
 

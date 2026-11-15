@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Next Chapter | Book Discovery</title>
+<link rel="stylesheet" href="styles.css">
+<main class="block-container">
+  <header class="masthead"><span>◈ NEXT CHAPTER</span><span id="count"></span></header>
+  <section class="hero">
+    <h1>Find your<br><em>next chapter.</em></h1>
+    <p>Start with a book you enjoyed and find more books with similar reader ratings.</p>
+  </section>
+  <form>
+    <label for="title">Start with a book</label>
+    <input id="title" list="titles" placeholder="Search by book title" required disabled>
+    <datalist id="titles"></datalist>
+    <button disabled>Find similar books →</button>
+    <p id="status" role="status"></p>
+  </form>
+  <section aria-labelledby="heading">
+    <h2 class="section-title" id="heading">Explore the catalog</h2>
+    <p class="ranking-note" id="note" hidden>We compare rating patterns across readers. The shared reader count provides context for each match.</p>
+    <ol class="book-grid"></ol>
+  </section>
+  <footer class="app-footer"><span>Book-Crossing ratings</span><a href="https://openlibrary.org/dev/docs/api/covers">Covers by Open Library</a></footer>
+</main>
+<script type="module" src="app.js"></script>
+</html>
