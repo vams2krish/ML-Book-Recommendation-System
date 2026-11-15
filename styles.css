@@ -1,0 +1,30 @@
+.stApp {background:#f7f4ed;color:#222822}
+[data-testid="stHeader"] {background:transparent}
+[data-testid="stToolbar"] {display:none}
+.block-container {max-width:1080px;padding:2rem 2.3rem 2rem}
+.masthead,.app-footer {display:flex;justify-content:space-between;gap:1rem;border-bottom:1px solid #d8d5c8;padding:0 0 1rem;font:700 .72rem system-ui;letter-spacing:.16em;color:#354c3f}
+.catalog-count {color:#526053;text-align:right}
+.hero {margin:1.2rem 0 .6rem;padding:2.8rem 2.6rem;background:#18382e;color:#fff8e9;border-radius:18px;background-image:radial-gradient(ellipse at 100% 100%,#395b46,transparent 55%)}
+.eyebrow,.section-label {font:700 .73rem system-ui;letter-spacing:.19em;color:#536456}
+.hero .eyebrow {color:#d4e1c9}
+.hero h1 {font:400 clamp(3rem,8vw,6rem)/.95 Georgia,serif;letter-spacing:-.06em;margin:.85rem 0 1.2rem;padding:0;color:inherit}
+.hero h1 em {color:#dae5b4;font-weight:400}
+.hero p {max-width:35rem;margin:0;color:#e1e9dc;font-size:1rem}
+[data-testid="stForm"] {padding:0}
+[data-testid="stFormSubmitButton"] button {background:#214737;color:#fff;border:0;border-radius:8px;padding:.55rem 1rem}
+[data-testid="stFormSubmitButton"] button:hover {background:#35624e;color:#fff}
+[data-testid="stWidgetLabel"] p {color:#222822;font-weight:650}
+.section-title,.empty-list h2 {font:400 clamp(1.7rem,4vw,2.65rem)/1.15 Georgia,serif;color:#233c30;padding:.45rem 0 .75rem}
+.empty-list {border:1px dashed #b9b8a7;border-radius:12px;padding:1rem 1.3rem;margin-top:.5rem}
+.empty-list p {color:#495649;margin:0}
+.book-grid {list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(9rem,100%),1fr));gap:.75rem;padding:0;margin:0}
+.book-card {list-style:none;overflow:hidden;border:1px solid #dddacf;border-radius:12px;background:#fffcf4;min-width:0}
+.book-art {display:grid;place-items:center;position:relative;aspect-ratio:1.2;background:#c4d0a1;color:#223923}
+.book-art::before {content:"";position:absolute;inset:12%;border:1px solid currentColor;border-radius:50%;opacity:.4}
+.tone-1 {background:#ebc1ac;color:#6c332b}.tone-2 {background:#b7c9cb;color:#25434a}.tone-3 {background:#e6d3a2;color:#584821}.tone-4 {background:#cbbfd2;color:#493e57}
+.book-initial {font:italic 4rem Georgia,serif}
+.book-rank {position:absolute;left:9px;top:7px;font:700 .67rem system-ui;letter-spacing:.12em}
+.book-copy {padding:.8rem}.book-copy h3 {font:700 1.03rem/1.15 Georgia,serif;color:#22342a;padding:0;margin:0 0 .35rem;overflow-wrap:anywhere}
+.book-copy p {font-size:.8rem;color:#526053;margin:0}
+.app-footer {border-bottom:0;border-top:1px solid #d8d5c8;padding:1rem 0 0;margin-top:1.5rem;font-size:.65rem}
+@media (max-width:600px) {.block-container{padding:1.1rem 1rem}.hero{padding:2rem 1.2rem}.book-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.app-footer{flex-wrap:wrap}}

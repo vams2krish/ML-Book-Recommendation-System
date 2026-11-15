@@ -1,6 +1,4 @@
-streamlit
+streamlit>=1.33
+pandas
 numpy
 scikit-learn
-
-#Local packages
--e .

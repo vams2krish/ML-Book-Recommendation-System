@@ -1,16 +1,24 @@
 # Book Recommendation System
 
-Discover your next read through an interactive Streamlit app that recommends books with similar reader-rating patterns. Select a familiar title and explore five related books, with titles and cover images.
+Discover your next read through an interactive Streamlit app that recommends books with similar reader-rating patterns. Select a familiar title and explore five related books, with titles, authors, and illustrated title cards.
 
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
 ![Streamlit](https://img.shields.io/badge/UI-Streamlit-FF4B4B?logo=streamlit&logoColor=white)
 ![scikit-learn](https://img.shields.io/badge/ML-scikit--learn-F7931E?logo=scikitlearn&logoColor=white)
 
-## Project preview
+## Product screenshots
 
-![Book Recommendation System running locally](docs/images/book-recommendation-system.png)
+**Next Chapter** is the reading interface for the Book Recommendation System.
 
-*Screenshot of the actual Streamlit application. Cover images come from the dataset's external image URLs; availability depends on the image host.*
+![Next Chapter landing screen with book search](docs/images/01-discover.png)
+
+| Search for a book | Get a reading list |
+| --- | --- |
+| ![Searching for 1984](docs/images/03-search.png) | ![Five recommendations based on 1984](docs/images/04-recommendations.png) |
+
+| Try another title | Mobile layout | Empty selection |
+| --- | --- | --- |
+| ![Recommendations for The Hobbit](docs/images/05-another-book.png) | ![Reading list at mobile width](docs/images/06-mobile.png) | ![Prompt to choose a book](docs/images/02-empty-selection.png) |
 
 ## Overview
 
@@ -22,8 +30,8 @@ The repository includes the data exploration and training notebook, source datas
 
 - Search or select a title from the trained catalog of **742 books**.
 - Request **five book recommendations** with a single button.
-- Browse recommended titles and their cover images in a five-column layout.
-- Run inference locally using the included model artifacts.
+- Browse titles and authors in responsive cards with built-in artwork.
+- Run inference locally using the included catalog and ratings artifacts.
 - Inspect and reproduce data preparation and training in a Jupyter notebook.
 
 ## How recommendations work
@@ -34,7 +42,7 @@ The repository includes the data exploration and training notebook, source datas
 4. Keep book titles with **at least 50 rating records** in the filtered, joined data.
 5. Remove duplicate reader/title pairs and build a book-by-reader matrix, filling missing ratings with zero.
 6. Convert the matrix to a SciPy compressed sparse row matrix and fit scikit-learn's `NearestNeighbors(algorithm="brute")`.
-7. At inference, request six neighbors and display positions 1–5, assuming the first result is the selected book itself.
+7. At inference, rank the catalog by distance, resolve ties by title, exclude the selected book explicitly, and return up to five alternatives.
 
 The included pivot matrix has **742 rows (books) × 888 columns (readers)**. The model uses scikit-learn's default Minkowski metric with `p=2`, equivalent to Euclidean distance; cosine similarity is not configured.
 
@@ -44,7 +52,7 @@ flowchart LR
     B --> C[Book by reader rating matrix]
     C --> D[Nearest-neighbor model]
     E[Selected book] --> D
-    D --> F[Five titles and cover images]
+    D --> F[Five titles and authors]
 ```
 
 ## Technology
@@ -61,7 +69,7 @@ flowchart LR
 
 ## Run locally
 
-Use **Python 3.11** for the best starting point when working with the historical model. The package metadata permits Python 3.11 and newer, but the saved estimator was created with **scikit-learn 1.3.0**. Loading it with another version can produce compatibility warnings or failures; retraining in your chosen environment is recommended for a reproducible deployment.
+Use **Python 3.11 or later**. The app fits its nearest-neighbor model from the bundled ratings matrix when the catalog loads and caches it for subsequent searches.
 
 ```bash
 git clone https://github.com/vams2krish/ML-Book-Recommendation-System.git
@@ -86,19 +94,18 @@ Install dependencies and launch from the repository root:
 ```bash
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
-python -m pip install pandas scipy
 python -m streamlit run app.py
 ```
 
-Open the local URL printed by Streamlit, typically `http://localhost:8501`. Select a book, then click **Show Recommendation**.
-
-`pandas` is explicitly needed to deserialize the saved DataFrames. The existing requirements are unpinned, so they do not recreate the original training environment. For an environment matching the saved estimator, use Python 3.11 and install `scikit-learn==1.3.0` with compatible NumPy, pandas, and SciPy versions, or regenerate all four artifacts together.
+Open the local URL printed by Streamlit, typically `http://localhost:8501`. Select a book, then click **Find similar books**.
 
 ## Repository layout
 
 ```text
 ML-Book-Recommendation-System/
-├── app.py                          # Streamlit UI and recommendation functions
+├── app.py                          # Streamlit search and reading list
+├── recommender.py                  # Catalog and nearest-neighbor retrieval
+├── styles.css                      # Next Chapter product styling
 ├── Book Recommender System.ipynb    # Exploration, preprocessing, training, export
 ├── artifacts/
 │   ├── model.pkl                   # Fitted nearest-neighbor estimator
@@ -112,9 +119,9 @@ ML-Book-Recommendation-System/
 │   ├── books.csv                   # Additional copies in the repository
 │   ├── ratings.csv
 │   └── users.csv
-├── docs/images/                    # Project screenshot
+├── docs/images/                    # Product screenshots
 ├── src/                            # Local package placeholder
-├── requirements.txt                # Runtime dependencies and editable package
+├── requirements.txt                # Runtime dependencies
 ├── setup.py                        # Package metadata
 ├── Procfile                        # Historical Heroku launch command
 └── setup.sh                        # Historical Streamlit server configuration
@@ -126,7 +133,7 @@ The `BX-*.csv` files contain the Book-Crossing dataset. The notebook uses book t
 
 The dataset and cover images belong to their respective rights holders. Review the original dataset's terms before redistributing or using the data commercially. The project does not establish a separate license for third-party data or artwork.
 
-All four pickle files must remain aligned: the estimator's row indices correspond to `book_pivot.pkl`, while `final_rating.pkl` supplies cover URLs. Only load pickle files from trusted sources, because deserialization can execute code.
+The app reads the ratings matrix and catalog metadata from `book_pivot.pkl` and `final_rating.pkl`. The notebook also exports an estimator and title index for historical use. Only load pickle files from trusted sources.
 
 ## Retrain the model
 
@@ -155,8 +162,7 @@ Use the port assigned by your hosting provider when required. `Procfile` and `se
 - Only titles in the filtered training catalog are selectable; new books need retraining.
 - Missing ratings and any existing zero ratings are both represented as zero in the matrix.
 - Grouping by title can combine different editions or books sharing the same title.
-- The display skips the first neighbor by position; an explicit selected-title exclusion would handle distance ties more reliably.
-- Cover links may be unavailable. The current UI does not provide a fallback image.
+- Cards use built-in artwork; they do not rely on external book cover links.
 - The notebook does not report held-out recommendation metrics, so no accuracy or quality score is claimed.
 - Dependency locking, automated evaluation, artifact validation, content-based features, and reader-specific recommendations are possible next steps.
 

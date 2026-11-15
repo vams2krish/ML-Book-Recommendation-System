@@ -1,67 +1,85 @@
-import pickle
+from html import escape
+from pathlib import Path
+
+import pandas as pd
 import streamlit as st
-import numpy as np
+
+from recommender import BookRecommender
+
+ROOT = Path(__file__).resolve().parent
+
+st.set_page_config(page_title="Next Chapter | Book Discovery", page_icon="📚")
+st.html(str(ROOT / "styles.css"))
 
 
-st.header("Book Recommender system using Machine Learning")
-model = pickle.load(open('artifacts/model.pkl','rb'))
-books_name = pickle.load(open('artifacts/books_name.pkl','rb'))
-final_rating = pickle.load(open('artifacts/final_rating.pkl','rb'))
-book_pivot = pickle.load(open('artifacts/book_pivot.pkl','rb'))
+@st.cache_resource
+def load_catalog():
+    data = ROOT / "artifacts"
+    return BookRecommender(
+        pd.read_pickle(data / "book_pivot.pkl"),
+        pd.read_pickle(data / "final_rating.pkl"),
+    )
 
 
-def fetch_poster(suggestion):
-    book_name = []
-    ids_index = []
-    poster_url = []
-
-    for book_id in suggestion:
-        book_name.append(book_pivot.index[book_id])
-
-    for name in book_name[0]: 
-        ids = np.where(final_rating['title'] == name)[0][0]
-        ids_index.append(ids)
-
-    for idx in ids_index:
-        url = final_rating.iloc[idx]['img_url']
-        poster_url.append(url)
-
-    return poster_url
+def render_cards(titles, catalog):
+    cards = []
+    for rank, title in enumerate(titles, 1):
+        safe_title = escape(title)
+        author = escape(str(catalog.authors.get(title, "Author unavailable")))
+        initial = escape(title.strip()[:1].upper())
+        cards.append(f"""
+            <li class="book-card">
+                <div class="book-art tone-{(rank - 1) % 5}" aria-hidden="true">
+                    <span class="book-initial">{initial}</span>
+                    <span class="book-rank">{rank:02d}</span>
+                </div>
+                <div class="book-copy"><h3>{safe_title}</h3><p>{author}</p></div>
+            </li>""")
+    st.html('<ol class="book-grid">' + "".join(cards) + "</ol>")
 
 
-def recommend_book(book_name):
-    book_list = []
-    book_id = np.where(book_pivot.index == book_name)[0][0]
-    distance , suggestion = model.kneighbors(book_pivot.iloc[book_id,:].values.reshape(1,-1), n_neighbors = 6)    
+try:
+    catalog = load_catalog()
+except (OSError, ValueError, ImportError, KeyError):
+    st.error("The book catalog could not be loaded. Check that the included data files and dependencies are installed.")
+    st.stop()
 
-    poster_url  = fetch_poster(suggestion)
-    for i in range (len(suggestion)):
-        books = book_pivot.index[suggestion[i]]
-        for j in books:
-            book_list.append(j)
-    return book_list, poster_url        
+st.html(f"""
+    <div class="masthead"><span>◈ &nbsp; NEXT CHAPTER</span>
+    <span class="catalog-count">{len(catalog.titles):,} BOOKS TO EXPLORE</span></div>
+    <div class="hero">
+        <div class="eyebrow">THE READING ROOM</div>
+        <h1>Find your<br><em>next chapter.</em></h1>
+        <p>Start with a book you enjoyed. Discover what to read next based on how readers rated it and other books.</p>
+    </div>
+""")
+with st.form("discovery", border=False):
+    selected = st.selectbox("Start with a book", sorted(catalog.titles, key=str.casefold),
+                            index=None, placeholder="Search by book title")
+    submitted = st.form_submit_button("Find similar books →", type="primary")
 
+if submitted:
+    if selected is None:
+        st.warning("Choose a book to see recommendations.")
+    else:
+        st.session_state["seed_title"] = selected
 
-selected_books = st.selectbox(
-    "Type or select a book",
-    books_name
-)
+seed = st.session_state.get("seed_title")
+if seed:
+    matches = catalog.recommend(seed)
+    st.html(f"""
+        <div class="section-label">YOUR READING LIST &nbsp; / &nbsp; {len(matches):02d} MATCHES</div>
+        <h2 class="section-title">If you liked <em>{escape(seed)}</em></h2>
+    """)
+    if matches:
+        render_cards(matches, catalog)
+    else:
+        st.info("There are no other books in this catalog.")
+else:
+    st.html("""
+        <div class="empty-list"><div class="section-label">THE NEXT FIVE</div>
+        <h2>Your reading list starts here.</h2>
+        <p>Pick a title above to discover five books with similar reader ratings.</p></div>
+    """)
 
-if st.button('Show Recommendation'):
-    recommended_books,poster_url = recommend_book(selected_books)
-    col1, col2, col3, col4, col5 = st.columns(5)
-    with col1:
-        st.text(recommended_books[1])
-        st.image(poster_url[1])
-    with col2:
-        st.text(recommended_books[2])
-        st.image(poster_url[2])
-    with col3:
-        st.text(recommended_books[3])
-        st.image(poster_url[3])
-    with col4:
-        st.text(recommended_books[4])
-        st.image(poster_url[4])
-    with col5:
-        st.text(recommended_books[5])
-        st.image(poster_url[5])        
+st.html('<div class="app-footer"><span>◈ NEXT CHAPTER</span><span>POWERED BY BOOK-CROSSING RATINGS</span></div>')
