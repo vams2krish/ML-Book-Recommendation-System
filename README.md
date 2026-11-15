@@ -8,7 +8,7 @@ Discover your next read through an interactive Streamlit app that recommends boo
 
 ## Product screenshots
 
-**Next Chapter** is the reading interface for the Book Recommendation System.
+**Next Chapter** shows real book covers in horizontal shelves. Search for a title, explore five recommendations, and open **Why this book?** to see how the model found each match.
 
 ![Next Chapter landing screen with book search and a featured cover shelf](docs/images/01-discover.png)
 
@@ -125,9 +125,7 @@ ML-Book-Recommendation-System/
 ├── docs/images/                    # Product screenshots
 ├── src/                            # Local package placeholder
 ├── requirements.txt                # Runtime dependencies
-├── setup.py                        # Package metadata
-├── Procfile                        # Historical Heroku launch command
-└── setup.sh                        # Historical Streamlit server configuration
+└── setup.py                        # Package metadata
 ```
 
 ## Data and model artifacts
@@ -149,15 +147,9 @@ python -m jupyter notebook "Book Recommender System.ipynb"
 
 Run the notebook cells in order from the repository root. Its export cells overwrite the four files in `artifacts/`. Restart Streamlit after exporting so it loads the regenerated files. The `artifacts/` directory is already included in this repository.
 
-## Deployment
+## Live demo
 
-The app can run on a host that supports Python and Streamlit. Install its dependencies, include the trusted artifacts, set the working directory to the repository root, and use:
-
-```bash
-python -m streamlit run app.py --server.address 0.0.0.0 --server.port 8501
-```
-
-Use the port assigned by your hosting provider when required. `Procfile` and `setup.sh` preserve an older Heroku setup; they are not evidence of a currently available hosted demo.
+A public Vercel deployment is pending. To try the interactive app, follow the [local setup instructions](#run-locally).
 
 ## Limitations and future improvements
 
