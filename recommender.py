@@ -11,6 +11,12 @@ class BookRecommender:
         self.authors = dict(zip(authors["title"], authors["author"]))
         self.model = NearestNeighbors(algorithm="brute").fit(self.vectors)
 
+    def shared_explicit_ratings(self, first, second):
+        """Count readers who gave both titles a positive rating."""
+        first_ratings = self.vectors[self.positions[first]]
+        second_ratings = self.vectors[self.positions[second]]
+        return int(((first_ratings > 0) & (second_ratings > 0)).sum())
+
     def recommend(self, title, limit=5):
         """Return at most limit distinct alternatives, nearest first."""
         if title not in self.positions:

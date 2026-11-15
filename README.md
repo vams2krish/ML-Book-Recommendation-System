@@ -20,6 +20,8 @@ Discover your next read through an interactive Streamlit app that recommends boo
 | --- | --- | --- |
 | ![Recommendations for The Da Vinci Code](docs/images/05-another-book.png) | ![Reading list at mobile width](docs/images/06-mobile.png) | ![Prompt to choose a book](docs/images/02-empty-selection.png) |
 
+![Why this book explanation open beneath a recommendation](docs/images/07-why-this-book.png)
+
 ## Overview
 
 This project implements item-based collaborative filtering on Book-Crossing reader ratings. Each book is represented by its ratings across readers, and a nearest-neighbor model retrieves books with nearby rating vectors. The application uses a selected book as its starting point; it does not require an account or a personal reading history.
@@ -31,6 +33,7 @@ The repository includes the data exploration and training notebook, source datas
 - Search or select a title from the trained catalog of **742 books**.
 - Request **five book recommendations** with a single button.
 - Browse real book covers, titles, and authors in horizontal shelves that scroll on narrow screens.
+- Open **Why this book?** on any recommendation to see how it was matched and how many readers gave both titles an explicit score.
 - Run inference locally using the included catalog and ratings artifacts.
 - Inspect and reproduce data preparation and training in a Jupyter notebook.
 

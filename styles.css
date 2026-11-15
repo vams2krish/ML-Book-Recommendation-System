@@ -50,3 +50,8 @@ ol.book-grid {display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 
   .hero {padding:1.6rem 1.2rem}
   ol.book-grid {grid-auto-columns:42%}
 }
+
+.ranking-note {color:#bcbcc5;max-width:65ch}
+.book-reason {border-top:1px solid #393941;margin-top:.7rem;padding-top:.55rem}
+.book-reason summary {color:#ffccd7;font-size:.8rem;cursor:pointer}
+.book-reason p {margin:.4rem 0 0;line-height:1.45}

@@ -24,7 +24,7 @@ def load_catalog():
     return catalog, dict(zip(preferred["title"], preferred["ISBN"]))
 
 
-def render_cards(titles, catalog, isbns):
+def render_cards(titles, catalog, isbns, seed=None):
     cards = []
     for rank, title in enumerate(titles, 1):
         safe_title = escape(title)
@@ -35,13 +35,21 @@ def render_cards(titles, catalog, isbns):
         if isbn:
             url = f"https://covers.openlibrary.org/b/isbn/{isbn}-M.jpg?default=false"
             cover = f'<span class="cover-image" style="background-image:url({url})"></span>'
+        reason = ""
+        if seed is not None:
+            count = catalog.shared_explicit_ratings(seed, title)
+            reader = "reader" if count == 1 else "readers"
+            overlap = f"{count:,} {reader} gave both books a score." if count else "No readers gave both books a score in this dataset."
+            reason = f"""<details class="book-reason"><summary>Why this book?</summary>
+                <p>Its rating pattern was among the five closest to your chosen book.
+                {overlap}</p></details>"""
         cards.append(f"""
             <li class="book-card">
                 <div class="book-art tone-{(rank - 1) % 5}" aria-hidden="true">
                     <span class="book-initial">{initial}</span>
                     {cover}
                 </div>
-                <div class="book-copy"><h3>{safe_title}</h3><p>{author}</p></div>
+                <div class="book-copy"><h3>{safe_title}</h3><p>{author}</p>{reason}</div>
             </li>""")
     st.html('<ol class="book-grid">' + "".join(cards) + "</ol>")
 
@@ -80,7 +88,8 @@ if seed:
         <h2 class="section-title">If you liked <em>{escape(seed)}</em></h2>
     """)
     if matches:
-        render_cards(matches, catalog, isbns)
+        st.html('<p class="ranking-note">We compare ratings across readers and show the closest matches. Unscored books count as zero, and the reader counts below describe overlap rather than the ranking criteria.</p>')
+        render_cards(matches, catalog, isbns, seed=seed)
     else:
         st.info("There are no other books in this catalog.")
 else:
