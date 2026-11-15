@@ -15,23 +15,31 @@ st.html(str(ROOT / "styles.css"))
 @st.cache_resource
 def load_catalog():
     data = ROOT / "artifacts"
-    return BookRecommender(
-        pd.read_pickle(data / "book_pivot.pkl"),
-        pd.read_pickle(data / "final_rating.pkl"),
-    )
+    metadata = pd.read_pickle(data / "final_rating.pkl")
+    catalog = BookRecommender(pd.read_pickle(data / "book_pivot.pkl"), metadata)
+    isbns = metadata["ISBN"].astype(str).str.strip().str.upper()
+    valid = metadata.assign(ISBN=isbns)[isbns.str.fullmatch(r"(?:[0-9]{9}[0-9X]|[0-9]{13})")]
+    editions = valid.groupby(["title", "ISBN"]).size().reset_index(name="ratings")
+    preferred = editions.sort_values(["ratings", "ISBN"], ascending=[False, True]).drop_duplicates("title")
+    return catalog, dict(zip(preferred["title"], preferred["ISBN"]))
 
 
-def render_cards(titles, catalog):
+def render_cards(titles, catalog, isbns):
     cards = []
     for rank, title in enumerate(titles, 1):
         safe_title = escape(title)
         author = escape(str(catalog.authors.get(title, "Author unavailable")))
         initial = escape(title.strip()[:1].upper())
+        isbn = isbns.get(title)
+        cover = ""
+        if isbn:
+            url = f"https://covers.openlibrary.org/b/isbn/{isbn}-M.jpg?default=false"
+            cover = f'<span class="cover-image" style="background-image:url({url})"></span>'
         cards.append(f"""
             <li class="book-card">
                 <div class="book-art tone-{(rank - 1) % 5}" aria-hidden="true">
                     <span class="book-initial">{initial}</span>
-                    <span class="book-rank">{rank:02d}</span>
+                    {cover}
                 </div>
                 <div class="book-copy"><h3>{safe_title}</h3><p>{author}</p></div>
             </li>""")
@@ -39,7 +47,7 @@ def render_cards(titles, catalog):
 
 
 try:
-    catalog = load_catalog()
+    catalog, isbns = load_catalog()
 except (OSError, ValueError, ImportError, KeyError):
     st.error("The book catalog could not be loaded. Check that the included data files and dependencies are installed.")
     st.stop()
@@ -72,14 +80,13 @@ if seed:
         <h2 class="section-title">If you liked <em>{escape(seed)}</em></h2>
     """)
     if matches:
-        render_cards(matches, catalog)
+        render_cards(matches, catalog, isbns)
     else:
         st.info("There are no other books in this catalog.")
 else:
-    st.html("""
-        <div class="empty-list"><div class="section-label">THE NEXT FIVE</div>
-        <h2>Your reading list starts here.</h2>
-        <p>Pick a title above to discover five books with similar reader ratings.</p></div>
-    """)
+    st.html('<h2 class="section-title">Explore the catalog</h2>')
+    featured = ("1984", "The Da Vinci Code", "The Lovely Bones: A Novel",
+                "The Secret Life of Bees", "Life of Pi")
+    render_cards([title for title in featured if title in catalog.positions], catalog, isbns)
 
-st.html('<div class="app-footer"><span>◈ NEXT CHAPTER</span><span>POWERED BY BOOK-CROSSING RATINGS</span></div>')
+st.html('<div class="app-footer"><span>◈ NEXT CHAPTER</span><span>BOOK-CROSSING RATINGS · <a href="https://openlibrary.org/dev/docs/api/covers">Covers by Open Library</a></span></div>')

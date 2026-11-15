@@ -1,6 +1,6 @@
 # Book Recommendation System
 
-Discover your next read through an interactive Streamlit app that recommends books with similar reader-rating patterns. Select a familiar title and explore five related books, with titles, authors, and illustrated title cards.
+Discover your next read through an interactive Streamlit app that recommends books with similar reader-rating patterns. Select a familiar title and explore five related books, with titles, authors, and book-cover thumbnails.
 
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
 ![Streamlit](https://img.shields.io/badge/UI-Streamlit-FF4B4B?logo=streamlit&logoColor=white)
@@ -10,7 +10,7 @@ Discover your next read through an interactive Streamlit app that recommends boo
 
 **Next Chapter** is the reading interface for the Book Recommendation System.
 
-![Next Chapter landing screen with book search](docs/images/01-discover.png)
+![Next Chapter landing screen with book search and a featured cover shelf](docs/images/01-discover.png)
 
 | Search for a book | Get a reading list |
 | --- | --- |
@@ -18,7 +18,7 @@ Discover your next read through an interactive Streamlit app that recommends boo
 
 | Try another title | Mobile layout | Empty selection |
 | --- | --- | --- |
-| ![Recommendations for The Hobbit](docs/images/05-another-book.png) | ![Reading list at mobile width](docs/images/06-mobile.png) | ![Prompt to choose a book](docs/images/02-empty-selection.png) |
+| ![Recommendations for The Da Vinci Code](docs/images/05-another-book.png) | ![Reading list at mobile width](docs/images/06-mobile.png) | ![Prompt to choose a book](docs/images/02-empty-selection.png) |
 
 ## Overview
 
@@ -30,7 +30,7 @@ The repository includes the data exploration and training notebook, source datas
 
 - Search or select a title from the trained catalog of **742 books**.
 - Request **five book recommendations** with a single button.
-- Browse titles and authors in responsive cards with built-in artwork.
+- Browse real book covers, titles, and authors in horizontal shelves that scroll on narrow screens.
 - Run inference locally using the included catalog and ratings artifacts.
 - Inspect and reproduce data preparation and training in a Jupyter notebook.
 
@@ -162,7 +162,7 @@ Use the port assigned by your hosting provider when required. `Procfile` and `se
 - Only titles in the filtered training catalog are selectable; new books need retraining.
 - Missing ratings and any existing zero ratings are both represented as zero in the matrix.
 - Grouping by title can combine different editions or books sharing the same title.
-- Cards use built-in artwork; they do not rely on external book cover links.
+- Cover thumbnails use the [Open Library Covers API](https://openlibrary.org/dev/docs/api/covers). The app chooses the ISBN with the most ratings for each title, so the displayed cover may be from a different edition than the one you read. Missing or unavailable covers show a letter tile.
 - The notebook does not report held-out recommendation metrics, so no accuracy or quality score is claimed.
 - Dependency locking, automated evaluation, artifact validation, content-based features, and reader-specific recommendations are possible next steps.
 
